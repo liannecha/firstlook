@@ -1,0 +1,18 @@
+.search-page { max-width: 1038px; margin: 0 auto; padding: 88px 24px 56px; }
+.search-page h1 { font-size: 36px; font-weight: 700; letter-spacing: -1px; color: var(--heading-text); }
+.search-intro { margin: 8px 0 32px; color: var(--body-text); }
+.search-field label { display: block; margin-bottom: 10px; font-size: 14px; font-weight: 500; }
+.search-input-row { display: flex; gap: 12px; align-items: center; }
+.search-input-row input { min-width: 0; width: 100%; min-height: 48px; padding: 12px 16px; background: var(--white); border: 1px solid var(--border); border-radius: 10px; color: var(--heading-text); font-size: 16px; }
+.search-input-row input::placeholder { color: var(--muted-gray); }
+.search-input-row input:focus-visible { outline: 2px solid var(--primary-blue); outline-offset: 3px; }
+.search-clear { min-height: 44px; padding: 8px 12px; font-size: 14px; font-weight: 600; color: var(--primary-blue); cursor: pointer; }
+.search-count { margin: 20px 0; font-size: 14px; color: var(--muted-gray); }
+.search-result { padding: 24px 0; border-top: 1px solid var(--border); }
+.search-result-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.search-result h2, .search-empty h2 { font-size: 22px; font-weight: 700; line-height: 1.3; letter-spacing: -.5px; }
+.search-founder { margin-top: 8px; font-size: 14px; font-weight: 500; color: var(--muted-gray); }
+.search-result .company-link { margin-top: 8px; }
+.search-empty { padding: 32px 0; border-top: 1px solid var(--border); }
+.search-empty p { margin-top: 12px; }
+@media (max-width: 599px) { .search-page { padding: 80px 16px 40px; } .search-page h1 { font-size: 32px; } }

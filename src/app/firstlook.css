@@ -1,0 +1,115 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/inter-400.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/inter-500.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/inter-600.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/inter-700.ttf") format("truetype");
+}
+
+/* FirstLook design tokens. */
+:root {
+  --primary-blue: #3D50FF;
+  --accent-purple: #793BFF;
+  --heading-text: #202020;
+  --body-text: #595959;
+  --muted-gray: #767676;
+  --border: #E7E7E7;
+  --background: #FAFBFD;
+  --white: #FFFFFF;
+  --foreground: var(--heading-text);
+  --font-inter: "Inter", Arial, Helvetica, sans-serif;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary-blue);
+  --color-accent: var(--accent-purple);
+  --color-heading: var(--heading-text);
+  --color-body: var(--body-text);
+  --color-muted: var(--muted-gray);
+  --color-border: var(--border);
+  --color-white: var(--white);
+  --font-sans: var(--font-inter);
+}
+
+body {
+  background: var(--background);
+  color: var(--body-text);
+  font-family: var(--font-inter);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+h1, h2, h3 { color: var(--heading-text); }
+button, input { font: inherit; }
+
+/* Shared navigation shell. */
+* { box-sizing: border-box; }
+.app-shell { min-height: 100dvh; padding-left: 72px; }
+.navigation-rail { position: fixed; inset: 0 auto 0 0; width: 72px; background: var(--white); border-right: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; z-index: 30; }
+.rail-brand { display: grid; place-items: center; width: 44px; height: 42px; margin: 24px 0 36px; text-decoration: none; }
+.rail-links { display: flex; flex-direction: column; gap: 12px; }
+.rail-link { position: relative; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 14px; color: var(--muted-gray); }
+.rail-link:hover { background: var(--background); color: var(--heading-text); }
+.rail-link[aria-current="page"] { background: linear-gradient(135deg, #3d50ff12, #793bff12); color: var(--primary-blue); }
+.rail-tooltip { position: absolute; left: 58px; padding: 7px 12px; border-radius: 7px; background: var(--heading-text); color: white; font-size: 13px; font-weight: 500; pointer-events: none; white-space: nowrap; opacity: 0; }
+.rail-link:hover .rail-tooltip, .rail-link:focus-visible .rail-tooltip { opacity: 1; }
+.primary-content { min-width: 0; }
+:where(a, button, [tabindex]):focus-visible { outline: 2px solid var(--primary-blue); outline-offset: 4px; }
+.utility-page { max-width: 760px; margin: 0 auto; padding: 110px 32px 64px; }
+.utility-page h1 { font-size: 36px; font-weight: 700; letter-spacing: -1px; margin-bottom: 16px; }
+.utility-page p { color: var(--body-text); line-height: 1.5; }
+.utility-page a { display: inline-block; margin-top: 24px; color: var(--primary-blue); }
+@media (max-width: 599px) { .app-shell { padding-left: 56px; } .navigation-rail { width: 56px; } .rail-link { width: 44px; height: 44px; } .rail-brand { margin-top: 18px; margin-bottom: 28px; } .utility-page { padding: 100px 24px 40px; } }
+
+:root {
+  --sidebar: var(--white); --sidebar-foreground: var(--body-text);
+  --sidebar-accent: #F2F2F2; --sidebar-accent-foreground: var(--heading-text);
+  --sidebar-primary: var(--primary-blue); --sidebar-primary-foreground: var(--white);
+  --sidebar-border: var(--border); --sidebar-ring: var(--primary-blue);
+  --popover: var(--white); --popover-foreground: var(--heading-text);
+  --primary: var(--primary-blue); --primary-foreground: var(--white);
+  --secondary: #F2F2F2; --secondary-foreground: var(--heading-text);
+  --muted: #F2F2F2; --muted-foreground: var(--muted-gray);
+  --accent: #F2F2F2; --accent-foreground: var(--heading-text);
+  --input: var(--border); --ring: var(--primary-blue); --radius: .5rem;
+}
+@theme inline {
+  --color-sidebar: var(--sidebar); --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary); --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent); --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border); --color-sidebar-ring: var(--sidebar-ring);
+  --color-popover: var(--popover); --color-popover-foreground: var(--popover-foreground);
+  --color-primary-foreground: var(--primary-foreground); --color-secondary: var(--secondary); --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted-foreground: var(--muted-foreground); --color-accent-foreground: var(--accent-foreground);
+  --color-input: var(--input); --color-ring: var(--ring);
+}

@@ -7,7 +7,7 @@
 .carousel-scroll::-webkit-scrollbar { display: none; }
 .carousel-scroll.is-dragging { scroll-snap-type: none; cursor: grabbing; }
 .carousel-slide { flex: 0 0 var(--pair-width); width: var(--pair-width); min-width: 0; border: 0; background: transparent; color: var(--muted-gray); scroll-snap-align: center; scroll-snap-stop: always; user-select: none; cursor: pointer; }
-.carousel-slide:not(.is-current) .slide-pair { transform: scale(.6); opacity: .9; filter: brightness(.7); }
+.carousel-slide:not(.is-current) .slide-pair { transform: scale(.7); opacity: .9; filter: brightness(.7); }
 .carousel-slide.is-current { z-index: 1; }
 .slide-pair { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); align-items: stretch; gap: 0; width: 100%; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; transform: scale(1); opacity: 1; filter: brightness(1); transition: transform 420ms cubic-bezier(.22, 1, .36, 1), opacity 420ms ease, filter 420ms ease; }
 .slide-box { position: relative; width: 100%; min-width: 0; aspect-ratio: 9 / 16; overflow: hidden; border: 1px solid var(--border); border-radius: 18px 0 0 18px; background: color-mix(in srgb, var(--muted) 55%, var(--white)); }

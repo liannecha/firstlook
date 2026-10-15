@@ -10,8 +10,17 @@
 .carousel-slide:not(.is-current) .slide-pair { transform: scale(.99); opacity: .9; }
 .carousel-slide.is-current { z-index: 1; }
 .slide-pair { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); align-items: stretch; gap: 0; width: 100%; padding: 20px; border: 1px solid var(--border); border-radius: 24px; background: var(--background); box-shadow: 0 8px 32px #2020200a; transform: scale(1); opacity: 1; transition: transform 420ms cubic-bezier(.22, 1, .36, 1), opacity 420ms ease, box-shadow 420ms ease; }
-.slide-box { width: 100%; min-width: 0; aspect-ratio: 9 / 16; overflow: hidden; border: 1px solid var(--border); border-radius: 18px 0 0 18px; background: color-mix(in srgb, var(--muted) 55%, var(--white)); }
+.slide-box { position: relative; width: 100%; min-width: 0; aspect-ratio: 9 / 16; overflow: hidden; border: 1px solid var(--border); border-radius: 18px 0 0 18px; background: color-mix(in srgb, var(--muted) 55%, var(--white)); }
 .slide-box video { display: block; width: 100%; height: 100%; border-radius: inherit; object-fit: cover; }
+.video-controls { position: absolute; right: 12px; bottom: 12px; left: 12px; display: flex; align-items: center; gap: 10px; padding: 8px 10px; color: white; }
+.video-play-toggle { display: grid; place-items: center; width: 32px; height: 32px; flex: 0 0 32px; border: 0; border-radius: 50%; background: transparent; color: inherit; cursor: pointer; }
+.video-play-toggle:hover { background: #ffffff24; }
+.video-play-toggle svg { width: 17px; height: 17px; }
+.video-seek { width: 100%; min-width: 0; accent-color: white; cursor: pointer; }
+.video-time { flex: 0 0 auto; font-size: 11px; font-variant-numeric: tabular-nums; text-shadow: 0 1px 3px #000; }
+.video-mute-toggle { display: grid; place-items: center; width: 32px; height: 32px; flex: 0 0 32px; border: 0; border-radius: 50%; background: transparent; color: inherit; cursor: pointer; }
+.video-mute-toggle:hover { background: #ffffff24; }
+.video-mute-toggle svg { width: 18px; height: 18px; }
 .slide-pair .story-details { width: 100%; height: 100%; min-height: 0; border-radius: 0 18px 18px 0; }
 .carousel-slide:focus-visible .slide-pair { outline: 2px solid var(--primary-blue); outline-offset: 4px; }
 .placeholder-number { color: var(--border); font-size: clamp(44px, 8cqi, 100px); font-weight: 600; line-height: 1; letter-spacing: -.06em; margin-bottom: 20px; }
@@ -29,8 +38,8 @@
 .story-details { display: flex; flex-direction: column; justify-content: center; min-width: 0; padding: clamp(18px, 3cqw, 40px); border: 1px solid var(--border); border-radius: 18px; background: var(--white); }
 .story-company-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 22px; }
 .story-eyebrow { color: var(--primary-blue); font-size: 12px; font-weight: 600; letter-spacing: .13em; text-transform: uppercase; }
-.story-bookmark { display: grid; place-items: center; width: 40px; height: 40px; flex: 0 0 40px; border: 1px solid var(--border); border-radius: 8px; background: var(--white); color: var(--body-text); cursor: pointer; }
-.story-bookmark:hover:not(:disabled), .story-bookmark[aria-pressed="true"] { border-color: var(--primary-blue); color: var(--primary-blue); }
+.story-bookmark { display: grid; place-items: center; width: 40px; height: 40px; flex: 0 0 40px; border: 0; border-radius: 8px; background: transparent; color: var(--body-text); cursor: pointer; }
+.story-bookmark:hover:not(:disabled), .story-bookmark[aria-pressed="true"] { color: var(--primary-blue); }
 .story-bookmark:disabled { cursor: wait; opacity: .6; }
 .story-bookmark:focus-visible { outline: 2px solid var(--primary-blue); outline-offset: 3px; }
 .story-bookmark svg { width: 18px; height: 18px; }

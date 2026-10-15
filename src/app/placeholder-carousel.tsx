@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, Bookmark, ChevronLeft, ChevronRight, UserRound } from "lucide-react";
+import { ArrowRight, Bookmark, ChevronLeft, ChevronRight, Pause, Play, UserRound, Volume2, VolumeX } from "lucide-react";
 import { founderStories } from "./founders";
 import { useWatchlist } from "./watchlist";
 
@@ -14,9 +14,18 @@ const items = founderStories.map((story, index) => ({
 const slides = [...items, ...items, ...items];
 const wrap = (index: number) => ((index % items.length) + items.length) % items.length;
 
+function pauseVideoAtStart(video: HTMLVideoElement) {
+  video.pause();
+  video.currentTime = 0;
+}
+
 export default function PlaceholderCarousel() {
   const [selected, setSelected] = useState(1);
   const [centerSlot, setCenterSlot] = useState(items.length + 1);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(true);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
   const { savedIds, ready, toggle } = useWatchlist();
   const viewport = useRef<HTMLDivElement>(null);
   const videoRefs = useRef(new Map<number, HTMLVideoElement>());
@@ -29,12 +38,37 @@ export default function PlaceholderCarousel() {
   const number = items[selected].id;
 
   useEffect(() => {
+    const video = videoRefs.current.get(centerSlot);
+    if (!video) return;
+    const updateTime = () => {
+      setCurrentTime(video.currentTime);
+      setDuration(Number.isFinite(video.duration) ? video.duration : 0);
+    };
+    const updatePlayback = () => setIsPlaying(!video.paused);
+    const updateMuted = () => setIsMuted(video.muted);
+    updateTime();
+    updatePlayback();
+    updateMuted();
+    video.addEventListener("timeupdate", updateTime);
+    video.addEventListener("loadedmetadata", updateTime);
+    video.addEventListener("play", updatePlayback);
+    video.addEventListener("pause", updatePlayback);
+    video.addEventListener("volumechange", updateMuted);
+    return () => {
+      video.removeEventListener("timeupdate", updateTime);
+      video.removeEventListener("loadedmetadata", updateTime);
+      video.removeEventListener("play", updatePlayback);
+      video.removeEventListener("pause", updatePlayback);
+      video.removeEventListener("volumechange", updateMuted);
+    };
+  }, [centerSlot]);
+
+  useEffect(() => {
     for (const [slot, video] of videoRefs.current) {
       if (slot === centerSlot) {
         video.play().catch(error => console.error("Unable to autoplay the centered story video:", error));
       } else {
-        video.pause();
-        video.currentTime = 0;
+        pauseVideoAtStart(video);
       }
     }
   }, [centerSlot]);
@@ -89,13 +123,39 @@ export default function PlaceholderCarousel() {
   }
 
   function move(direction: number) { goTo(targetSlot.current + direction); }
+  function toggleVideoPlayback() {
+    const video = videoRefs.current.get(centerSlot);
+    if (!video) return;
+    if (video.paused) {
+      video.play().catch(error => console.error("Unable to play the centered story video:", error));
+    } else {
+      video.pause();
+    }
+  }
+  function toggleVideoMute() {
+    const video = videoRefs.current.get(centerSlot);
+    if (!video) return;
+    video.muted = !video.muted;
+    setIsMuted(video.muted);
+  }
+  function seekVideo(event: React.ChangeEvent<HTMLInputElement>) {
+    const video = videoRefs.current.get(centerSlot);
+    if (!video) return;
+    const nextTime = Number(event.currentTarget.value);
+    video.currentTime = nextTime;
+    setCurrentTime(nextTime);
+  }
+  function formatTime(seconds: number) {
+    if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
+    return `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, "0")}`;
+  }
 
   return (
     <main className="placeholder-page">
       <h1 className="sr-only">Discover founder stories</h1>
       <div className="placeholder-layout">
         <section className="story-carousel" aria-label="Founder story placeholders" aria-roledescription="carousel" onKeyDown={event => {
-          if (event.target instanceof Element && event.target.closest("video,button,a")) return;
+          if (event.target instanceof Element && event.target.closest("video,button,a,input")) return;
           if (event.altKey || event.ctrlKey || event.metaKey) return;
           if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
             event.preventDefault();
@@ -105,7 +165,7 @@ export default function PlaceholderCarousel() {
           <div className="carousel-window">
             <div ref={viewport} className="carousel-scroll" tabIndex={0} aria-label="Swipe left or right to browse videos" onPointerDown={event => {
               if (event.pointerType !== "mouse" || event.button !== 0) return;
-              if (event.target instanceof Element && event.target.closest("video,button,a")) return;
+              if (event.target instanceof Element && event.target.closest("video,button,a,input")) return;
               event.preventDefault();
               dragging.current = { x: event.clientX, scroll: event.currentTarget.scrollLeft, moved: false };
               suppressClick.current = false;
@@ -144,14 +204,29 @@ export default function PlaceholderCarousel() {
                 const story = item.story;
                 const saved = savedIds.includes(story.id);
                 return <div key={slot} className={`carousel-slide ${active ? "is-current" : ""}`} role="group" aria-roledescription="slide" aria-label={`${story.companyName} story`} aria-hidden={Math.abs(distance) > 1 ? true : undefined} onClick={event => {
-                  if (event.target instanceof Element && event.target.closest("video,button,a")) return;
+                  if (event.target instanceof Element && event.target.closest("video,button,a,input")) return;
                   goTo(slot);
                 }}>
                   <div className="slide-pair">
-                    <div className="slide-box">{Math.abs(distance) <= 1 ? <video ref={video => {
+                    <div className="slide-box" onClick={event => {
+                      if (event.target instanceof Element && event.target.closest(".video-controls")) return;
+                      if (active) toggleVideoPlayback();
+                      else goTo(slot);
+                    }}>{Math.abs(distance) <= 1 ? <video ref={video => {
                       if (video) videoRefs.current.set(slot, video);
                       else videoRefs.current.delete(slot);
-                    }} src={item.videoSrc} autoPlay={active} muted playsInline loop controls={active} preload="auto" aria-label={`${story.companyName} founder video`}>Your browser does not support HTML video.</video> : null}</div>
+                    }} src={item.videoSrc} autoPlay={active} muted playsInline loop preload="auto" aria-label={`${story.companyName} founder video`}>Your browser does not support HTML video.</video> : null}
+                      {active ? <div className="video-controls" onClick={event => event.stopPropagation()}>
+                        <button type="button" className="video-play-toggle" aria-label={isPlaying ? "Pause video" : "Play video"} onClick={toggleVideoPlayback}>
+                          {isPlaying ? <Pause aria-hidden="true" /> : <Play aria-hidden="true" />}
+                        </button>
+                        <input className="video-seek" type="range" min="0" max={duration || 1} step="0.1" value={Math.min(currentTime, duration || 1)} aria-label="Video progress" disabled={!duration} onChange={seekVideo} />
+                        <span className="video-time">{formatTime(currentTime)} / {formatTime(duration)}</span>
+                        <button type="button" className="video-mute-toggle" aria-label={isMuted ? "Unmute video" : "Mute video"} aria-pressed={!isMuted} onClick={toggleVideoMute}>
+                          {isMuted ? <VolumeX aria-hidden="true" /> : <Volume2 aria-hidden="true" />}
+                        </button>
+                      </div> : null}
+                    </div>
                     <aside className="story-details" aria-label={`Details for ${story.companyName}`}>
                       <div className="story-company-row">
                         <p className="story-eyebrow">{story.companyName}</p>

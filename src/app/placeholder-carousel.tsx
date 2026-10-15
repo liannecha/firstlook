@@ -230,6 +230,14 @@ export default function PlaceholderCarousel() {
                     <aside className="story-details" aria-label={`Details for ${story.companyName}`}>
                       <div className="story-company-row">
                         <p className="story-eyebrow">{story.companyName}</p>
+                      </div>
+                      <h2>{story.tagline}</h2>
+                      <div className="story-identity">
+                        <span className="story-avatar" aria-hidden="true"><UserRound /></span>
+                        <div><button type="button" className="placeholder-name founder-name-button">{story.founderName}</button><p className="placeholder-company">Founder</p></div>
+                      </div>
+                      <p className="story-description">{story.description}</p>
+                      <div className="story-action-area">
                         <button
                           type="button"
                           className="story-bookmark"
@@ -239,14 +247,8 @@ export default function PlaceholderCarousel() {
                           title={saved ? "Remove from watchlist" : "Save to watchlist"}
                           onClick={() => toggle(story.id)}
                         ><Bookmark aria-hidden="true" fill={saved ? "currentColor" : "none"} /></button>
+                        <a className="story-action" href={story.website} target="_blank" rel="noopener noreferrer">Learn more <ArrowRight aria-hidden="true" /></a>
                       </div>
-                      <h2>{story.tagline}</h2>
-                      <div className="story-identity">
-                        <span className="story-avatar" aria-hidden="true"><UserRound /></span>
-                        <div><button type="button" className="placeholder-name founder-name-button">{story.founderName}</button><p className="placeholder-company">Founder</p></div>
-                      </div>
-                      <p className="story-description">{story.description}</p>
-                      <div className="story-action-area"><a className="story-action" href={story.website} target="_blank" rel="noopener noreferrer">Learn more <ArrowRight aria-hidden="true" /></a></div>
                     </aside>
                   </div>
                 </div>;
@@ -254,13 +256,6 @@ export default function PlaceholderCarousel() {
             </div>
             <button type="button" className="carousel-arrow carousel-previous" aria-label="Previous video" onClick={() => move(-1)}><ChevronLeft aria-hidden="true" /></button>
             <button type="button" className="carousel-arrow carousel-next" aria-label="Next video" onClick={() => move(1)}><ChevronRight aria-hidden="true" /></button>
-          </div>
-          <div className="carousel-dots" role="group" aria-label="Choose a story">
-            {items.map((item, index) => <button type="button" key={item.id} aria-label={`Select video ${item.id}`} aria-pressed={selected === index} onClick={() => {
-              const current = Math.round(((viewport.current?.scrollLeft ?? 0) - firstOffset.current) / stride.current);
-              const difference = index - wrap(current);
-              goTo(current + (difference > 2 ? difference - items.length : difference < -2 ? difference + items.length : difference));
-            }}><span /></button>)}
           </div>
           <p className="sr-only" role="status" aria-live="polite">Story {number} selected, {selected + 1} of {items.length}.</p>
         </section>

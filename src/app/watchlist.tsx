@@ -14,6 +14,7 @@ type WatchlistState = WatchlistData & {
   persistent: boolean;
   toggle: (id: string) => void;
   pin: (id: string) => void;
+  removeMany: (ids: readonly string[]) => void;
   setSort: (sort: SortOrder) => void;
 };
 const WatchlistContext = createContext<WatchlistState | null>(null);
@@ -53,6 +54,11 @@ export function WatchlistProvider({ children }: { children: React.ReactNode }) {
   function toggle(id: string) {
     if (ready && validIds.has(id)) update(toggleSaved(data, id));
   }
+  function removeMany(ids: readonly string[]) {
+    if (!ready) return;
+    const removed = new Set(ids);
+    update({ ...data, savedIds: data.savedIds.filter(id => !removed.has(id)), pinnedIds: data.pinnedIds.filter(id => !removed.has(id)) });
+  }
   function pin(id: string) {
     if (ready && validIds.has(id)) update(togglePinned(data, id));
   }
@@ -60,7 +66,7 @@ export function WatchlistProvider({ children }: { children: React.ReactNode }) {
     if (ready) update({ ...data, sort });
   }
 
-  return <WatchlistContext.Provider value={{ ...data, ready, persistent, toggle, pin, setSort }}>{children}</WatchlistContext.Provider>;
+  return <WatchlistContext.Provider value={{ ...data, ready, persistent, toggle, pin, removeMany, setSort }}>{children}</WatchlistContext.Provider>;
 }
 
 export function useWatchlist() {

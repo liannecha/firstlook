@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, Bookmark, ChevronLeft, ChevronRight, Pause, Play, UserRound, Volume2, VolumeX } from "lucide-react";
+import { ArrowRight, Bookmark, ChevronLeft, ChevronRight, Maximize2, Pause, Play, UserRound, Volume2, VolumeX, X } from "lucide-react";
 import { founderStories } from "./founders";
 import { useWatchlist } from "./watchlist";
 
@@ -20,6 +20,13 @@ function pauseVideoAtStart(video: HTMLVideoElement) {
 }
 
 export default function PlaceholderCarousel() {
+  const [expanded, setExpanded] = useState(false);
+  const [amounts, setAmounts] = useState<Record<string, string>>({});
+  const [review, setReview] = useState<{ companyName: string; amount: number; campaignUrl?: string } | null>(null);
+  const reviewDialog = useRef<HTMLDialogElement>(null);
+  const page = useRef<HTMLElement>(null);
+  const expandTrigger = useRef<HTMLButtonElement | null>(null);
+  const closeButton = useRef<HTMLButtonElement>(null);
   const [selected, setSelected] = useState(1);
   const [centerSlot, setCenterSlot] = useState(items.length + 1);
   const [isPlaying, setIsPlaying] = useState(true);
@@ -30,6 +37,7 @@ export default function PlaceholderCarousel() {
   const viewport = useRef<HTMLDivElement>(null);
   const videoRefs = useRef(new Map<number, HTMLVideoElement>());
   const selectedRef = useRef(1);
+  const pendingSelection = useRef<number | null>(null);
   const targetSlot = useRef(items.length + 1);
   const stride = useRef(0);
   const firstOffset = useRef(0);
@@ -82,7 +90,11 @@ export default function PlaceholderCarousel() {
       const second = node!.children[1] as HTMLElement;
       stride.current = second.offsetLeft - first.offsetLeft;
       firstOffset.current = first.offsetLeft;
-      targetSlot.current = items.length + selectedRef.current;
+      const item = pendingSelection.current ?? selectedRef.current;
+      pendingSelection.current = null;
+      selectedRef.current = item;
+      setSelected(item);
+      targetSlot.current = items.length + item;
       node!.scrollTo({ left: firstOffset.current + targetSlot.current * stride.current, behavior: "instant" });
       setCenterSlot(targetSlot.current);
     }
@@ -97,7 +109,7 @@ export default function PlaceholderCarousel() {
       setCenterSlot(middle);
     }
     function onScroll() {
-      if (!stride.current) return;
+      if (!stride.current || pendingSelection.current !== null) return;
       const slot = Math.round((node!.scrollLeft - firstOffset.current) / stride.current);
       const item = wrap(slot);
       selectedRef.current = item;
@@ -112,6 +124,29 @@ export default function PlaceholderCarousel() {
     const frame = requestAnimationFrame(measure);
     return () => { cancelAnimationFrame(frame); observer.disconnect(); node.removeEventListener("scroll", onScroll); clearTimeout(settleTimer); };
   }, []);
+
+  useEffect(() => {
+    if (!expanded) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const navigation = document.querySelector<HTMLElement>(".shell-navigation");
+    const wasInert = navigation?.inert ?? false;
+    if (navigation) navigation.inert = true;
+    closeButton.current?.focus({ preventScroll: true });
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      if (navigation) navigation.inert = wasInert;
+    };
+  }, [expanded]);
+
+  function closeExpanded() {
+    pendingSelection.current = selectedRef.current;
+    setExpanded(false);
+    requestAnimationFrame(() => {
+      const activeTrigger = page.current?.querySelector<HTMLButtonElement>(".is-current .story-expand");
+      (activeTrigger ?? expandTrigger.current)?.focus({ preventScroll: true });
+    });
+  }
 
   function goTo(slot: number) {
     const node = viewport.current;
@@ -151,7 +186,23 @@ export default function PlaceholderCarousel() {
   }
 
   return (
-    <main className="placeholder-page">
+    <main ref={page} className={`placeholder-page${expanded ? " is-expanded" : ""}`} role={expanded ? "dialog" : undefined} aria-modal={expanded ? true : undefined} aria-label={expanded ? "Full-screen founder stories" : undefined} onKeyDown={event => {
+      if (!expanded || (event.target instanceof Element && event.target.closest("dialog"))) return;
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeExpanded();
+      }
+      if (event.key === "Tab") {
+        const controls = Array.from(page.current?.querySelectorAll<HTMLElement>('button:not(:disabled), a[href], input:not(:disabled), [tabindex="0"]') ?? []).filter(node => !node.closest('[aria-hidden="true"]') && node.getClientRects().length > 0);
+        const first = controls[0];
+        const last = controls[controls.length - 1];
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+      }
+    }}>
+      {expanded ? <div className="expanded-toolbar">
+        <button ref={closeButton} type="button" className="expanded-control" onClick={closeExpanded} aria-label="Close full-screen view"><X aria-hidden="true" /> Close</button>
+      </div> : null}
       <h1 className="sr-only">Discover founder stories</h1>
       <div className="placeholder-layout">
         <section className="story-carousel" aria-label="Founder story placeholders" aria-roledescription="carousel" onKeyDown={event => {
@@ -208,6 +259,14 @@ export default function PlaceholderCarousel() {
                   goTo(slot);
                 }}>
                   <div className="slide-pair">
+                    {!expanded ? <button type="button" className="story-expand" aria-label={`Expand ${story.companyName} story`} title="Expand story" onClick={event => {
+                      event.stopPropagation();
+                      expandTrigger.current = event.currentTarget;
+                      pendingSelection.current = wrap(slot);
+                      selectedRef.current = wrap(slot);
+                      setSelected(wrap(slot));
+                      setExpanded(true);
+                    }}><Maximize2 aria-hidden="true" /></button> : null}
                     <div className="slide-box" onClick={event => {
                       if (event.target instanceof Element && event.target.closest(".video-controls")) return;
                       if (active) toggleVideoPlayback();
@@ -234,20 +293,36 @@ export default function PlaceholderCarousel() {
                       <h2>{story.tagline}</h2>
                       <div className="story-identity">
                         <span className="story-avatar" aria-hidden="true"><UserRound /></span>
-                        <div><button type="button" className="placeholder-name founder-name-button">{story.founderName}</button><p className="placeholder-company">Founder</p></div>
-                      </div>
-                      <p className="story-description">{story.description}</p>
-                      <div className="story-action-area">
+                        <div className="story-founder"><p className="placeholder-name">{story.founderName}</p><p className="placeholder-company">Founder</p></div>
                         <button
                           type="button"
-                          className="story-bookmark"
+                          className="story-follow"
                           disabled={!ready}
                           aria-pressed={saved}
-                          aria-label={`${saved ? "Remove" : "Save"} ${story.companyName} ${saved ? "from" : "to"} watchlist`}
-                          title={saved ? "Remove from watchlist" : "Save to watchlist"}
+                          aria-label={`${saved ? "Unfollow" : "Follow"} ${story.companyName}`}
                           onClick={() => toggle(story.id)}
-                        ><Bookmark aria-hidden="true" fill={saved ? "currentColor" : "none"} /></button>
-                        <a className="story-action" href={story.website} target="_blank" rel="noopener noreferrer">Learn more <ArrowRight aria-hidden="true" /></a>
+                        ><Bookmark aria-hidden="true" fill={saved ? "currentColor" : "none"} /><span>{saved ? "Following" : "Follow"}</span></button>
+                      </div>
+                      <ul className="story-founder-notes" aria-label="Founder notes (placeholder text)">
+                        <li title="Why I’m building this — placeholder">Why I’m building this</li>
+                        <li title="Why I can build it — placeholder">Why I can build it</li>
+                      </ul>
+                      <a className="story-learn-more" href={story.website} target="_blank" rel="noopener noreferrer">Learn more <ArrowRight aria-hidden="true" /></a>
+                      <div className="story-investment-area">
+                        <form className="story-investment-form" onSubmit={event => {
+                          event.preventDefault();
+                          setReview({ companyName: story.companyName, amount: Number(amounts[story.id]), campaignUrl: story.campaignUrl });
+                          reviewDialog.current?.showModal();
+                        }}>
+                          <label className="story-investment-label" htmlFor={`investment-${slot}`}>Invest<span>min $300</span></label>
+                          <div className="story-amount-row">
+                            <div className="story-amount-field">
+                              <span aria-hidden="true">$</span>
+                              <input id={`investment-${slot}`} aria-label={`Investment amount for ${story.companyName} in dollars`} type="number" inputMode="decimal" min="300" step="0.01" required placeholder="0" value={amounts[story.id] ?? ""} onChange={event => setAmounts(previous => ({ ...previous, [story.id]: event.target.value }))} />
+                            </div>
+                            <button type="submit" className="story-investment-next" aria-label={`Review investment in ${story.companyName}`} title="Continue to review"><ArrowRight aria-hidden="true" /></button>
+                          </div>
+                        </form>
                       </div>
                     </aside>
                   </div>
@@ -261,6 +336,15 @@ export default function PlaceholderCarousel() {
         </section>
 
       </div>
+      <dialog ref={reviewDialog} className="investment-review" aria-labelledby="investment-review-title" onClick={event => event.stopPropagation()}>
+        <button type="button" className="investment-review-close" aria-label="Close investment review" onClick={() => reviewDialog.current?.close()}><X aria-hidden="true" /></button>
+        <p className="story-eyebrow">{review?.companyName}</p>
+        <h2 id="investment-review-title">Review investment</h2>
+        <p className="investment-review-amount">{review ? new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 2 }).format(review.amount) : ""}</p>
+        <p className="investment-review-note">{review?.campaignUrl ? "Continue to the campaign page to review terms and complete your investment." : "Investment link coming soon. No investment has been made."}</p>
+        {review?.campaignUrl ? <a className="story-action" href={review.campaignUrl} target="_blank" rel="noopener noreferrer">View campaign <ArrowRight aria-hidden="true" /></a> : null}
+        <button type="button" className="investment-review-back" onClick={() => reviewDialog.current?.close()}>Back to edit amount</button>
+      </dialog>
     </main>
   );
 }

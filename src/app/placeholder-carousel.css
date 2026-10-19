@@ -76,3 +76,78 @@
 }
 @media (max-width: 599px) { .placeholder-page { padding: 40px 14px 32px; } }
 @media (prefers-reduced-motion: reduce) { .slide-pair, .slide-box, .story-action { transition: none; } .carousel-slide:not(.is-current) .slide-pair { transform: none; opacity: 1; } .story-action:hover, .story-action:active { transform: none; } }
+
+/* Expanded stories keep the same carousel and video elements mounted. */
+.slide-pair { position: relative; }
+.story-expand { position: absolute; top: 12px; right: 12px; z-index: 2; display: grid; place-items: center; width: 36px; height: 36px; border: 1px solid var(--border); border-radius: 10px; background: var(--white); color: var(--body-text); cursor: pointer; }
+.story-expand svg { width: 18px; height: 18px; }
+.story-expand:hover { color: var(--primary-blue); border-color: var(--primary-blue); }
+.story-expand:focus-visible, .expanded-control:focus-visible { outline: 2px solid var(--primary-blue); outline-offset: 3px; }
+.story-company-row { padding-right: 30px; }
+.placeholder-page.is-expanded { position: fixed; inset: 0; z-index: 100; width: 100%; height: 100dvh; padding: 84px 32px 24px; overflow-y: auto; overscroll-behavior: contain; background: var(--background, var(--white)); }
+.expanded-toolbar { position: fixed; top: 16px; right: 24px; left: 24px; z-index: 3; display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
+.expanded-control { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 10px; background: var(--white); color: var(--body-text); font: inherit; font-size: 13px; cursor: pointer; }
+.expanded-control svg { width: 18px; height: 18px; }
+.is-expanded .carousel-window { --pair-width: min(100%, calc((100dvh - 112px) * 1.125)); }
+.is-expanded .carousel-arrow { top: calc(50% - 22px); }
+@media (max-width: 680px) {
+  .placeholder-page.is-expanded { padding: 80px 14px 24px; }
+  .expanded-toolbar { right: 14px; left: 14px; }
+  .is-expanded .carousel-window { --pair-width: 100%; }
+  .is-expanded .carousel-arrow { top: 25%; }
+}
+
+/* Founder context and investment actions share a compact, consistent panel. */
+.slide-pair .story-details { justify-content: flex-start; padding-top: clamp(52px, 5cqw, 72px); padding-bottom: clamp(20px, 3cqw, 40px); }
+.story-company-row { margin-bottom: 16px; }
+.story-identity { gap: 10px; margin-top: 24px; }
+.story-avatar { width: 40px; height: 40px; }
+.story-founder { flex: 1; min-width: 0; }
+.story-founder .placeholder-name { font-size: clamp(12px, 1.4cqw, 16px); overflow-wrap: anywhere; }
+.story-follow { display: inline-flex; align-items: center; justify-content: center; gap: 5px; flex-shrink: 0; min-height: 44px; padding: 6px 8px; border: 1px solid var(--border); border-radius: 8px; color: var(--body-text); background: var(--white); font: inherit; font-size: 12px; cursor: pointer; }
+.story-follow svg { width: 15px; height: 15px; }
+.story-follow[aria-pressed="true"], .story-follow:hover { color: var(--primary-blue); border-color: var(--primary-blue); }
+.story-follow:disabled { opacity: .6; cursor: wait; }
+.story-founder-notes { margin: 24px 0; padding-left: 18px; color: var(--body-text); font-size: clamp(12px, 1.3cqw, 15px); line-height: 1.8; }
+.story-founder-notes li { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; list-style-position: inside; }
+.story-founder-notes { padding-left: 0; }
+.story-founder-notes span { color: var(--muted-gray); }
+.story-investment-area { margin-top: 0; padding-top: 18px; border-top: 1px solid var(--border); }
+.story-investment-label { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; white-space: nowrap; color: var(--heading-text); font-size: 14px; font-weight: 600; text-transform: uppercase; }
+.story-investment-label span { color: var(--muted-gray); font-size: 12px; font-weight: 400; text-transform: none; }
+.story-amount-row { display: flex; gap: 8px; margin-top: 12px; }
+.story-amount-field { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; min-height: 48px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--white); color: var(--muted-gray); font-size: 20px; }
+.story-amount-field:focus-within { outline: 2px solid var(--primary-blue); outline-offset: 2px; }
+.story-amount-field input { width: 100%; min-width: 0; padding: 0; border: 0; outline: 0; background: transparent; color: var(--heading-text); text-align: right; font: inherit; appearance: textfield; }
+.story-amount-field input::-webkit-inner-spin-button, .story-amount-field input::-webkit-outer-spin-button { appearance: none; margin: 0; }
+.story-investment-next { display: grid; place-items: center; flex: 0 0 48px; width: 48px; min-height: 48px; border: 0; border-radius: 8px; background: var(--primary-blue); color: var(--white); cursor: pointer; }
+.story-investment-next svg { width: 20px; height: 20px; }
+.story-investment-next:hover { filter: brightness(.9); }
+.story-learn-more { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; margin-top: auto; margin-bottom: 12px; color: var(--primary-blue); font-size: 13px; text-decoration: none; }
+.story-learn-more:hover { text-decoration: underline; }
+.story-learn-more svg { width: 16px; height: 16px; }
+.story-follow:focus-visible, .story-investment-next:focus-visible, .story-learn-more:focus-visible, .investment-review button:focus-visible { outline: 2px solid var(--primary-blue); outline-offset: 3px; }
+.investment-review { position: fixed; inset: 0; width: min(440px, calc(100vw - 32px)); max-height: calc(100dvh - 40px); overflow-y: auto; margin: auto; padding: 40px 28px 24px; border: 1px solid var(--border); border-radius: 18px; background: var(--white); color: var(--body-text); box-shadow: 0 24px 80px #0003; }
+.investment-review::backdrop { background: #0007; }
+.investment-review h2 { margin-top: 16px; font-size: 24px; font-weight: 600; }
+.investment-review-close { position: absolute; top: 8px; right: 8px; display: grid; place-items: center; width: 36px; height: 36px; border: 0; border-radius: 8px; background: transparent; color: inherit; cursor: pointer; }
+.investment-review-close svg { width: 20px; height: 20px; }
+.investment-review-amount { margin: 20px 0; font-size: 40px; font-weight: 600; }
+.investment-review-note { margin-bottom: 24px; color: var(--muted-gray); line-height: 1.6; }
+.investment-review-back { display: block; width: 100%; min-height: 44px; margin-top: 12px; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: inherit; font: inherit; cursor: pointer; }
+@container (max-width: 680px) {
+  .slide-pair .story-details { padding: 24px 20px 16px; }
+  .story-founder .placeholder-name { font-size: 14px; }
+  .story-founder-notes { font-size: 12px; margin-block: 20px; }
+}
+
+/* Keep the information panel readable on shorter desktop windows. */
+.carousel-window { --pair-width: min(100%, max(640px, calc((100dvh - 340px) * 1.2375 + 46.2px))); }
+.story-identity { display: grid; grid-template-columns: 40px minmax(0, 1fr); column-gap: 10px; row-gap: 8px; }
+.story-avatar { grid-row: 1 / 3; align-self: start; }
+.story-follow { grid-column: 2; justify-self: start; }
+.story-founder .placeholder-name { font-size: 14px; overflow-wrap: normal; }
+.story-founder-notes li::before { content: "•"; display: inline-block; margin-right: 8px; color: var(--muted-gray); }
+@container (max-width: 680px) {
+  .carousel-window { --pair-width: 100%; }
+}

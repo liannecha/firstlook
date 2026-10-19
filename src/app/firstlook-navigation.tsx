@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import WatchlistDrawerB from "./variants/b/watchlist-drawer-b";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { Activity, Search, BriefcaseBusiness, UserRound, ChevronRight } from "lucide-react";
@@ -19,18 +20,24 @@ const items = [
 
 function NavigationBody({ expanded, onOpen, onSelect }: { expanded: boolean; onOpen: (key: string) => void; onSelect: () => void }) {
   const pathname = usePathname();
+  const isVersionB = pathname === "/variants/b";
+  const destinations = isVersionB ? items.map(item => ({ ...item, href: item.key === "activity" ? "/variants/b" : item.href, label: item.key === "activity" ? "Roundup" : item.key === "deals" ? "Search" : item.key === "portfolio" ? "Watchlist" : item.label })) : items;
   return (
-    <nav className={`wefunder-nav-body ${expanded ? "is-expanded" : "is-collapsed"}`} aria-label="Main navigation" id={expanded ? "expanded-navigation" : undefined} onClick={event => { if (!expanded && event.target instanceof Element && !event.target.closest("a,button")) onOpen("header"); }}>
+    <nav className={`wefunder-nav-body ${expanded ? "is-expanded" : "is-collapsed"}${isVersionB ? " version-b-navigation" : ""}`} aria-label="Main navigation" id={expanded ? "expanded-navigation" : undefined} onClick={event => { if (!expanded && !isVersionB && event.target instanceof Element && !event.target.closest("a,button")) onOpen("header"); }}>
+      {!isVersionB ? <>
       <SidebarHeader className="wefunder-nav-header">
         {expanded ? <Link href="/profile" data-nav-destination="header" className="nav-profile-header" onClick={onSelect}><Avatar className="nav-avatar"><AvatarFallback><UserRound aria-hidden="true" /></AvatarFallback></Avatar><span>Your profile</span><ChevronRight className="nav-chevron" aria-hidden="true" /></Link> : <Tooltip><TooltipTrigger asChild><button className="nav-profile-header" data-nav-opener="header" aria-label="Expand navigation" aria-expanded={false} onClick={() => onOpen("header")}><Avatar className="nav-avatar"><AvatarFallback><UserRound aria-hidden="true" /></AvatarFallback></Avatar></button></TooltipTrigger><TooltipContent side="right">Your profile · Expand navigation</TooltipContent></Tooltip>}
       </SidebarHeader>
       <Separator className="nav-divider" />
-      <SidebarContent className="wefunder-nav-content" onClick={event => { if (!expanded && event.target instanceof Element && !event.target.closest("a,button")) onOpen("header"); }}>
+      </> : null}
+      <SidebarContent className="wefunder-nav-content" onClick={event => { if (!expanded && !isVersionB && event.target instanceof Element && !event.target.closest("a,button")) onOpen("header"); }}>
         <SidebarMenu className="wefunder-nav-menu">
-          {items.map(item => <SidebarMenuItem key={item.key}>
+          {destinations.map(item => <SidebarMenuItem key={item.key}>
+            {isVersionB && item.key === "portfolio" ? <WatchlistDrawerB className="wefunder-nav-item version-b-direct-nav"><item.icon aria-hidden="true" /><span className={expanded ? "nav-item-label" : "version-b-nav-caption"}>{item.label}</span></WatchlistDrawerB> : isVersionB ? <Link href={item.href} data-nav-destination={item.key} className="wefunder-nav-item version-b-direct-nav" data-active={pathname === item.href} aria-current={pathname === item.href ? "page" : undefined} onClick={onSelect}><item.icon aria-hidden="true" /><span className={expanded ? "nav-item-label" : "version-b-nav-caption"}>{item.label}</span></Link> : <>
             <SidebarMenuButton asChild isActive={pathname === item.href} size="lg" className="wefunder-nav-item" tooltip={expanded ? undefined : item.label}>
-              {expanded ? <Link href={item.href} data-nav-destination={item.key} aria-current={pathname === item.href ? "page" : undefined} onClick={onSelect}><item.icon aria-hidden="true" /><span className="nav-item-label">{item.label}{item.key === "portfolio" ? <small>Saved companies</small> : null}</span></Link> : <button data-nav-opener={item.key} aria-label={`Expand navigation for ${item.label}`} aria-expanded={false} aria-current={pathname === item.href ? "page" : undefined} onClick={() => onOpen(item.key)}><item.icon aria-hidden="true" /></button>}
+              {expanded || isVersionB ? <Link href={item.href} data-nav-destination={item.key} aria-current={pathname === item.href ? "page" : undefined} onClick={onSelect}><item.icon aria-hidden="true" /><span className={isVersionB && !expanded ? "version-b-nav-caption" : "nav-item-label"}>{item.label}{item.key === "portfolio" && !isVersionB ? <small>Saved companies</small> : null}</span></Link> : <button data-nav-opener={item.key} aria-label={`Expand navigation for ${item.label}`} aria-expanded={false} aria-current={pathname === item.href ? "page" : undefined} onClick={() => onOpen(item.key)}><item.icon aria-hidden="true" /></button>}
             </SidebarMenuButton>
+            </>}
           </SidebarMenuItem>)}
         </SidebarMenu>
       </SidebarContent>

@@ -1,0 +1,25 @@
+.version-b-watchlist-drawer[data-vaul-drawer-direction="left"] { z-index: 110; top: 0; bottom: 0; left: 0; width: min(300px, calc(100vw - 32px)); max-width: 300px; height: 100dvh; display: flex; flex-direction: column; gap: 0; background: #fff; border-right: 1px solid #e5e7eb; border-radius: 0 16px 16px 0; box-shadow: 8px 0 32px #1720331a; color: #202124; }
+.version-b-watchlist-drawer-header { position: relative; padding: 28px 52px 20px 24px; gap: 6px; border-bottom: 1px solid #e5e7eb; }
+.version-b-watchlist-drawer-header h2 { font-size: 20px; font-weight: 600; }
+.version-b-watchlist-drawer-header p { font-size: 13px; color: #646b76; }
+.version-b-watchlist-close { position: absolute; top: 22px; right: 14px; display: grid; place-items: center; width: 36px; height: 36px; border: 0; border-radius: 8px; background: transparent; cursor: pointer; }
+.version-b-watchlist-close svg { width: 20px; height: 20px; }
+.version-b-watchlist-close:hover { background: #f3f4f6; }
+.version-b-watchlist-drawer-body { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 8px 24px; }
+.version-b-watchlist-list { margin: 0; padding: 0; list-style: none; }
+.version-b-watchlist-list li { padding: 18px 0; border-bottom: 1px solid #eef0f3; overflow-wrap: anywhere; }
+.version-b-watchlist-list li:last-child { border-bottom: 0; }
+.version-b-watchlist-list p { font-size: 15px; font-weight: 550; line-height: 1.4; }
+.version-b-watchlist-list span { display: block; margin-top: 4px; color: #646b76; font-size: 13px; line-height: 1.4; }
+.version-b-watchlist-empty { padding: 36px 0; text-align: center; }
+.version-b-watchlist-empty svg { width: 24px; height: 24px; margin: 0 auto 16px; color: #777d86; }
+.version-b-watchlist-empty p { font-size: 15px; font-weight: 500; }
+.version-b-watchlist-empty span { display: block; margin-top: 8px; color: #646b76; font-size: 13px; line-height: 1.6; }
+.version-b-watchlist-drawer-footer { padding: 20px 24px max(20px, env(safe-area-inset-bottom)); border-top: 1px solid #e5e7eb; }
+.version-b-watchlist-drawer-footer a { display: flex; justify-content: space-between; align-items: center; min-height: 44px; color: var(--primary-blue); font-size: 14px; font-weight: 500; }
+.version-b-watchlist-close:focus-visible, .version-b-watchlist-drawer-footer a:focus-visible { outline: 2px solid var(--primary-blue); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .version-b-watchlist-drawer[data-vaul-drawer] { animation: none !important; transition: none !important; } }
+
+.version-b-watchlist-overlay { background: #1720330d; backdrop-filter: none; }
+
+.version-b-watchlist-overlay { z-index: 105; }

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { FounderStory } from "../../founders";
 import { companyDetailSections } from "../company-details";
 import CompanyDetailContent from "../company-detail-content";
+import PresentationB from "./presentation-b";
 
 export default function CompanyInformationB({ story, preview = false }: { story: FounderStory; preview?: boolean }) {
   const scrollArea = useRef<HTMLDivElement>(null);
@@ -27,13 +28,14 @@ export default function CompanyInformationB({ story, preview = false }: { story:
   return <div className="version-b-information-window" data-more-below={moreBelow} data-at-start={atStart}>
     <div ref={scrollArea} className="version-b-information-scroll" role="region" aria-label={`${story.companyName} highlights and company details`} tabIndex={preview ? -1 : 0} onScroll={event => { const area = event.currentTarget; setMoreBelow(area.scrollTop + area.clientHeight < area.scrollHeight - 2); setAtStart(area.scrollTop < 2); }}>
       <div ref={content} className="version-b-information-content">
-        <ul className={`version-b-story-founder-notes${story.cardFacts ? " version-b-has-facts" : ""}`} aria-label={story.cardFacts ? "Company highlights" : "Founder notes (placeholder text)"}>
-          {story.cardFacts ? story.cardFacts.map(fact => <li key={fact.label}><strong>{fact.label}:</strong> {fact.text}</li>) : <>
-            <li>Why I’m building this — placeholder</li>
-            <li>Why I can build it — placeholder</li>
+        <ol className={`version-b-story-founder-notes${story.cardFacts ? " version-b-has-facts" : ""}`} aria-label={story.cardFacts ? "Company highlights" : "Founder notes (placeholder text)"}>
+          {story.cardFacts ? story.cardFacts.map((fact, index) => <li key={fact.label}><span className="version-b-highlight-number" aria-hidden="true">{index + 1}</span><strong>{fact.label}:</strong> {fact.text}</li>) : <>
+            <li><span className="version-b-highlight-number" aria-hidden="true">1</span>Why I’m building this — placeholder</li>
+            <li><span className="version-b-highlight-number" aria-hidden="true">2</span>Why I can build it — placeholder</li>
           </>}
-        </ul>
+        </ol>
         <div className="version-b-inline-company-details">
+          <PresentationB companyId={story.id} companyName={story.companyName} preview={preview} />
           {companyDetailSections(story.id).map(section => <section key={section.title} className="version-b-information-section"><h4>{section.title}</h4><CompanyDetailContent section={section} /></section>)}
         </div>
       </div>

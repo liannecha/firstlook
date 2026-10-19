@@ -33,7 +33,7 @@ export default function CarouselB() {
   const [dragging, setDragging] = useState(false);
   const [exitDirection, setExitDirection] = useState(-1);
   const transitionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const passButton = useRef<HTMLButtonElement>(null);
+  const cardHeading = useRef<HTMLHeadingElement>(null);
   const completionHeading = useRef<HTMLHeadingElement>(null);
   const remaining = queues[activeTab];
   const selected = remaining[0] ?? -1;
@@ -171,9 +171,9 @@ export default function CarouselB() {
     if (transitionTimer.current) clearTimeout(transitionTimer.current);
   }, []);
 
-  function focusDecision() {
+  function focusCurrentCard() {
     requestAnimationFrame(() => {
-      (passButton.current ?? completionHeading.current)?.focus({ preventScroll: true });
+      (cardHeading.current ?? completionHeading.current)?.focus({ preventScroll: true });
       const card = page.current?.querySelector<HTMLElement>(".version-b-stack-deck, .version-b-stack-complete");
       const navigationHeight = expanded ? 64 : parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--topbar-height")) || 88;
       if (!expanded && card && card.getBoundingClientRect().top < navigationHeight + 8) card.scrollIntoView({ block: "start", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
@@ -197,7 +197,7 @@ export default function CarouselB() {
       busyRef.current = false;
       transitionTimer.current = null;
       setPhase("idle");
-      focusDecision();
+      focusCurrentCard();
     }
     if (reduced) {
       commit();
@@ -259,7 +259,7 @@ export default function CarouselB() {
     setQueues(previous => ({ ...previous, [feed]: [index, ...previous[feed].filter(item => item !== index)] }));
     setActiveTab(feed);
     setLastDecision(null);
-    focusDecision();
+    focusCurrentCard();
   }
 
   function openDiscover() {
@@ -322,7 +322,7 @@ export default function CarouselB() {
                         <p className="version-b-story-eyebrow">{story.companyName}</p>
                         {saved ? <span className="version-b-saved-status"><Check aria-hidden="true" /> Saved to watchlist</span> : null}
                       </div>
-                      <h2>{story.tagline}</h2>
+                      <h2 ref={preview ? undefined : cardHeading} tabIndex={-1}>{story.tagline}</h2>
                       <div className="version-b-story-identity">
                         <p className="version-b-placeholder-name">{story.founderName}</p>
                         <span className="version-b-placeholder-company"><span aria-hidden="true">· </span>Founder</span>
@@ -344,12 +344,6 @@ export default function CarouselB() {
                             <button type="submit" className="version-b-story-investment-next" aria-label={`Review investment in ${story.companyName}`} title="Review your investment amount">Review <ArrowRight aria-hidden="true" /></button>
                           </div>
                         </form>
-                      </div>
-                      <div className="version-b-inline-decisions" aria-label="Founder decisions">
-                        <div className="version-b-stack-decisions">
-                          <button ref={preview ? undefined : passButton} type="button" className="version-b-decision-pass" disabled={busy || !ready} onClick={() => decide("pass")}>Pass</button>
-                          <button type="button" className="version-b-decision-save" disabled={busy || !ready} onClick={() => decide("save")}>{saved ? <>Next founder <ArrowRight aria-hidden="true" /></> : <><Bookmark aria-hidden="true" /> Add to watchlist</>}</button>
-                        </div>
                       </div>
                       </div>
                     </aside>

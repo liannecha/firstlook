@@ -408,3 +408,39 @@
 
 .version-b-information-section .company-detail-content { margin-top: 4px; font-size: 13px; }
 .version-b-information-section .company-detail-content p { margin-top: 0; }
+
+/* Numbered highlights and the company presentation stay inside the reading area. */
+.version-b-information-content .version-b-story-founder-notes { counter-reset: highlight; list-style: none; padding-left: 0; }
+.version-b-information-content .version-b-story-founder-notes li { counter-increment: highlight; position: relative; padding-left: 34px; min-height: 24px; white-space: normal; overflow: visible; text-overflow: clip; list-style: none; }
+.version-b-information-content .version-b-story-founder-notes li::before { content: none; }
+.version-b-information-content .version-b-story-founder-notes .version-b-highlight-number { position: absolute; left: 0; top: 0; display: grid; place-items: center; width: 23px; height: 23px; box-sizing: border-box; margin: 0; border: 1px solid #374151; border-radius: 50%; color: #283342; font-size: 12px; font-weight: 500; line-height: 1; }
+.version-b-presentation-preview { position: relative; display: block; width: 100%; margin: 0 0 16px; padding: 0; overflow: hidden; border: 1px solid #dce0e6; border-radius: 8px; background: #f6f7f9; cursor: zoom-in; }
+.version-b-presentation-preview > img { display: block; width: 100%; height: auto; }
+.version-b-presentation-expand { position: absolute; right: 8px; bottom: 8px; display: grid; place-items: center; width: 30px; height: 30px; background: #ffffffed; color: #283342; border-radius: 5px; box-shadow: 0 1px 5px #0002; }
+.version-b-presentation-expand svg { width: 17px; height: 17px; }
+.version-b-presentation-preview:focus-visible { outline: 2px solid #494fff; outline-offset: 3px; }
+.version-b-presentation-dialog { position: fixed; inset: 0; box-sizing: border-box; width: 100vw; max-width: none; height: 100dvh; max-height: none; margin: 0; padding: 20px 24px; border: 0; background: #101318f5; color: #f8fafc; overflow: hidden; }
+.version-b-presentation-dialog[open] { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 16px; animation: version-b-presentation-appear 160ms ease-out; }
+.version-b-presentation-dialog::backdrop { background: #000b; }
+.version-b-presentation-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-width: 0; }
+.version-b-presentation-toolbar > span { font-size: 15px; font-weight: 600; overflow-wrap: anywhere; }
+.version-b-presentation-dialog button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 10px 16px; border: 1px solid #697181; border-radius: 8px; background: #262c36; color: #f8fafc; font: inherit; font-size: 14px; cursor: pointer; }
+.version-b-presentation-dialog button svg { width: 18px; height: 18px; flex-shrink: 0; }
+.version-b-presentation-dialog button:disabled { opacity: .4; cursor: default; }
+.version-b-presentation-dialog button:focus-visible { outline: 2px solid #aeb4ff; outline-offset: 3px; }
+.version-b-presentation-stage { display: flex; align-items: center; justify-content: center; min-width: 0; min-height: 0; overflow: hidden; }
+.version-b-presentation-stage > img { display: block; width: auto; height: auto; max-width: 100%; max-height: 100%; object-fit: contain; box-shadow: 0 4px 24px #0005; }
+.version-b-presentation-navigation { display: flex; align-items: center; justify-content: center; gap: 24px; }
+.version-b-presentation-navigation > span { min-width: 64px; text-align: center; font-size: 14px; font-variant-numeric: tabular-nums; }
+.version-b-presentation-error { max-width: 420px; text-align: center; }
+@keyframes version-b-presentation-appear { from { opacity: 0; } to { opacity: 1; } }
+@media (max-width: 599px) { .version-b-presentation-dialog { padding: 12px; gap: 12px; } .version-b-presentation-navigation { gap: 12px; } .version-b-presentation-navigation button { padding: 10px 12px; } }
+@media (prefers-reduced-motion: reduce) { .version-b-presentation-dialog[open] { animation: none; } }
+
+/* Give the founder, highlights, presentation, and detail sections room to breathe. */
+.version-b-information-window { margin-top: 20px; }
+.version-b-inline-company-details { margin-top: 24px; padding-top: 16px; }
+.version-b-information-section { margin-top: 24px; }
+.version-b-presentation-preview { margin-bottom: 0; }
+
+.version-b-story-company-row .version-b-story-eyebrow { font-size: 14px; }
